@@ -4,6 +4,7 @@ import org.apache.spark.SparkContext;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
+import org.apache.spark.sql.types.DataTypes;
 import org.apache.spark.sql.types.Metadata;
 import org.apache.spark.sql.types.StructField;
 import org.apache.spark.sql.types.StructType;
@@ -19,7 +20,15 @@ public class TradeDataLoader {
 
     public Dataset<Row> loadTrades(SparkSession session, String path) {
         //TODO: create an explicit schema for the trade data in the JSON files
-        StructType schema = null;
+        StructType schema = new StructType(new StructField[]{
+                new StructField("traderId", DataTypes.LongType, false, Metadata.empty()),
+                new StructField("entityId", DataTypes.LongType, false, Metadata.empty()),
+                new StructField("securityId", DataTypes.StringType, false, Metadata.empty()),
+                new StructField("lastQty", DataTypes.LongType, false, Metadata.empty()),
+                new StructField("lastPx", DataTypes.DoubleType, false, Metadata.empty()),
+                new StructField("tradeDate", DataTypes.DateType, false, Metadata.empty()),
+                new StructField("currency", DataTypes.StringType, false, Metadata.empty()),
+        });
 
         //TODO: load the trades dataset
         Dataset<Row> trades = session.read().json(path);
