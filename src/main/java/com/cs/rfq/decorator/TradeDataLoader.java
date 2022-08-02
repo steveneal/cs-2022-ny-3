@@ -12,6 +12,7 @@ import org.apache.spark.streaming.api.java.JavaDStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.io.Console;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,13 +33,10 @@ public class TradeDataLoader {
                 new StructField("TradeDate", DateType, true, Metadata.empty()),
                 new StructField("Currency", StringType, true, Metadata.empty()),
         });
-        //TODO: load the trades dataset
+        //load the trades dataset
         Dataset<Row> trades = session.read().schema(schema).json(path);
-       // trades.printSchema();
-
 
         //TODO: log a message indicating number of records loaded and the schema used
-
         return trades;
     }
 
