@@ -24,15 +24,14 @@ public class TradeDataLoader {
     public Dataset<Row> loadTrades(SparkSession session, String path) {
         //TODO: create an explicit schema for the trade data in the JSON files
         StructType schema = new StructType(new StructField[]{
-                new StructField("traderId", LongType, true, Metadata.empty()),
-                new StructField("entityId",LongType, true, Metadata.empty()),
-                new StructField("securityId", StringType, true, Metadata.empty()),
-                new StructField("lastQty", LongType, true, Metadata.empty()),
-                new StructField("lastPx", DoubleType, true, Metadata.empty()),
-                new StructField("tradeDate", DateType, true, Metadata.empty()),
-                new StructField("currency", StringType, true, Metadata.empty()),
+                new StructField("TraderId", LongType, true, Metadata.empty()),
+                new StructField("EntityId",LongType, true, Metadata.empty()),
+                new StructField("SecurityID", StringType, true, Metadata.empty()),
+                new StructField("LastQty", LongType, true, Metadata.empty()),
+                new StructField("LastPx", DoubleType, true, Metadata.empty()),
+                new StructField("TradeDate", DateType, true, Metadata.empty()),
+                new StructField("Currency", StringType, true, Metadata.empty()),
         });
-
         //TODO: load the trades dataset
         Dataset<Row> trades = session.read().schema(schema).json(path);
        // trades.printSchema();
