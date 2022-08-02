@@ -39,5 +39,4 @@ public class TradeDataLoader {
         //TODO: log a message indicating number of records loaded and the schema used
         return trades;
     }
-
 }
