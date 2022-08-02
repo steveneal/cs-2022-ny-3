@@ -42,5 +42,4 @@ public class TradeDataLoader {
 
         return trades;
     }
-
 }
