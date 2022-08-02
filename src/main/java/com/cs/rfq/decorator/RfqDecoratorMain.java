@@ -24,6 +24,9 @@ public class RfqDecoratorMain {
                 .getOrCreate();
         JavaSparkContext spark = new JavaSparkContext(session.sparkContext());
         //TODO: create a new RfqProcessor and set it listening for incoming RFQs
+        RfqProcessor x = new RfqProcessor(session, jssc);
+        x.startSocketListener(jssc);
+
 
     }
 
