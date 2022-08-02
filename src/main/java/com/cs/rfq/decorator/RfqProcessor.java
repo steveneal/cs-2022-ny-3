@@ -6,19 +6,18 @@ import com.cs.rfq.decorator.extractors.TotalTradesWithEntityExtractor;
 import com.cs.rfq.decorator.extractors.VolumeTradedWithEntityYTDExtractor;
 import com.cs.rfq.decorator.publishers.MetadataJsonLogPublisher;
 import com.cs.rfq.decorator.publishers.MetadataPublisher;
+import org.apache.spark.SparkConf;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
+import org.apache.spark.streaming.Durations;
 import org.apache.spark.streaming.api.java.JavaDStream;
 import org.apache.spark.streaming.api.java.JavaStreamingContext;
 import org.joda.time.DateTime;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import static org.apache.spark.sql.functions.sum;
 
@@ -41,6 +40,9 @@ public class RfqProcessor {
         this.streamingContext = streamingContext;
 
         //TODO: use the TradeDataLoader to load the trade data archives
+        String filePath = getClass().getResource("trades.json").getPath();
+        trades = new TradeDataLoader().loadTrades(session, filePath);
+        trades.show();
 
         //TODO: take a close look at how these two extractors are implemented
         extractors.add(new TotalTradesWithEntityExtractor());
@@ -49,8 +51,12 @@ public class RfqProcessor {
 
     public void startSocketListener() throws InterruptedException {
         //TODO: stream data from the input socket on localhost:9000
-
+        SparkConf conf = new SparkConf().setAppName("StreamFromSocket");
+        JavaStreamingContext jssc = new JavaStreamingContext(conf, Durations.seconds(5));
+        JavaDStream<String> lines = jssc.socketTextStream("localhost", 9000);
         //TODO: convert each incoming line to a Rfq object and call processRfq method with it
+        //JavaDStream<String> rfqObject = lines.map(Rfq.fromJson()) ;
+
 
         //TODO: start the streaming context
     }
