@@ -40,25 +40,30 @@ public class RfqProcessor {
         this.streamingContext = streamingContext;
 
         //TODO: use the TradeDataLoader to load the trade data archives
-        String filePath = getClass().getResource("trades.json").getPath();
+        String filePath = "C:\\exercises\\cs-2022-ny-3\\src\\test\\resources\\trades";
         trades = new TradeDataLoader().loadTrades(session, filePath);
-        trades.show();
+       // trades.show();
 
         //TODO: take a close look at how these two extractors are implemented
         extractors.add(new TotalTradesWithEntityExtractor());
         extractors.add(new VolumeTradedWithEntityYTDExtractor());
     }
 
-    public void startSocketListener() throws InterruptedException {
+    public void startSocketListener(JavaStreamingContext jssc) throws InterruptedException {
         //TODO: stream data from the input socket on localhost:9000
-        SparkConf conf = new SparkConf().setAppName("StreamFromSocket");
-        JavaStreamingContext jssc = new JavaStreamingContext(conf, Durations.seconds(5));
+        //SparkConf conf = new SparkConf().setAppName("StreamFromSocket");
+
+        //JavaStreamingContext jssc = new JavaStreamingContext(conf, Durations.seconds(5));
         JavaDStream<String> lines = jssc.socketTextStream("localhost", 9000);
         //TODO: convert each incoming line to a Rfq object and call processRfq method with it
         //JavaDStream<String> rfqObject = lines.map(Rfq.fromJson()) ;
-
-
+        JavaDStream<Rfq> rfqObject = lines.map(line -> Rfq.fromJson(line));
+        rfqObject.foreachRDD(rdd -> {
+            rdd.collect().forEach(rfq -> processRfq(rfq));
+        });
         //TODO: start the streaming context
+        jssc.start();
+        jssc.awaitTermination();
     }
 
     public void processRfq(Rfq rfq) {
