@@ -51,12 +51,8 @@ public class RfqProcessor {
 
     public void startSocketListener(JavaStreamingContext jssc) throws InterruptedException {
         //TODO: stream data from the input socket on localhost:9000
-        //SparkConf conf = new SparkConf().setAppName("StreamFromSocket");
-
-        //JavaStreamingContext jssc = new JavaStreamingContext(conf, Durations.seconds(5));
         JavaDStream<String> lines = jssc.socketTextStream("localhost", 9000);
         //TODO: convert each incoming line to a Rfq object and call processRfq method with it
-        //JavaDStream<String> rfqObject = lines.map(Rfq.fromJson()) ;
         JavaDStream<Rfq> rfqObject = lines.map(line -> Rfq.fromJson(line));
         rfqObject.foreachRDD(rdd -> {
             rdd.collect().forEach(rfq -> processRfq(rfq));

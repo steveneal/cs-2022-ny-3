@@ -7,6 +7,7 @@ import java.net.Socket;
 /**
  * Simple chat server capable of sending and receiving String lines on separate in/out port numbers.
  */
+
 public class ChatterboxServer {
 
     public static final int SERVER_PORT_OUT = 9000;
