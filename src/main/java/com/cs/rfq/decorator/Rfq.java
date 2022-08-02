@@ -2,6 +2,8 @@ package com.cs.rfq.decorator;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import org.apache.spark.ml.recommendation.ALS;
+import org.apache.spark.ml.recommendation.ALSModel;
 
 import java.io.Serializable;
 import java.lang.reflect.Type;
@@ -17,8 +19,19 @@ public class Rfq implements Serializable {
     private String side;
 
     public static Rfq fromJson(String json) {
-        //TODO: build a new RFQ setting all fields from data passed in the RFQ json message
-        return null;
+        String rfqInfo = json;
+        //convert json literal map to java map
+        Type t = new TypeToken<Map<String, String>>() {}.getType();
+        Map<String, String> fields = new Gson().fromJson(rfqInfo, t);
+        Rfq newrfq = new Rfq();
+        newrfq.setId(fields.get("id"));
+        newrfq.setIsin(fields.get("instrumentId"));
+        newrfq.setTraderId(Long.parseLong(fields.get("traderId")));
+        newrfq.setEntityId(Long.parseLong(fields.get("entityId")));
+        newrfq.setQuantity(Long.parseLong(fields.get("qty")));
+        newrfq.setPrice(Double.parseDouble(fields.get("price")));
+        newrfq.setSide(fields.get("side"));
+        return newrfq;
     }
 
     @Override
