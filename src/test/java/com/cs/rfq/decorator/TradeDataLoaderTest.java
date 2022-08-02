@@ -20,6 +20,7 @@ public class TradeDataLoaderTest extends AbstractSparkUnitTest {
     public void setup() {
         String filePath = getClass().getResource("loader-test-trades.json").getPath();
         trades = new TradeDataLoader().loadTrades(session, filePath);
+        //trades.show();
     }
 
     @Test

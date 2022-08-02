@@ -22,7 +22,7 @@ public class TradeDataLoader {
         StructType schema = null;
 
         //TODO: load the trades dataset
-        Dataset<Row> trades = null;
+        Dataset<Row> trades = session.read().json(path);
 
         //TODO: log a message indicating number of records loaded and the schema used
 
