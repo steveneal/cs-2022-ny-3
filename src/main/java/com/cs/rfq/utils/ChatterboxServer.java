@@ -81,9 +81,15 @@ public class ChatterboxServer {
                     //naive polling of System.in to check for input and allow thread to be interrupted
                     if (System.in.available() > 0) {
                         String line = in.readLine();
-                        out.println(line);
-                        out.flush();
-                        log("sent", line);
+                        if (line.equals("!!")) {
+                            System.out.println("test");
+                        }
+                        else {
+                            out.println(line);
+                            out.flush();
+                            log("sent", line);
+                        }
+
                     }  else {
                         Thread.sleep(500);
                     }
