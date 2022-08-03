@@ -40,9 +40,10 @@ public class RfqProcessor {
         this.streamingContext = streamingContext;
 
         //TODO: use the TradeDataLoader to load the trade data archives
-        String filePath = "C:\\exercises\\cs-2022-ny-3\\src\\test\\resources\\trades";
+        String filePath = "src\\test\\resources\\trades\\trades.json";
         trades = new TradeDataLoader().loadTrades(session, filePath);
-       // trades.show();
+        trades.printSchema();
+        trades.show();
 
         //TODO: take a close look at how these two extractors are implemented
         extractors.add(new TotalTradesWithEntityExtractor());
@@ -69,6 +70,7 @@ public class RfqProcessor {
         Map<RfqMetadataFieldNames, Object> metadata = new HashMap<>();
 
         //TODO: get metadata from each of the extractors
+        metadata = extractors.get(0).extractMetaData(rfq, this.session, this.trades);
 
         //TODO: publish the metadata
     }

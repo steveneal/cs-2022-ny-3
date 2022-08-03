@@ -34,7 +34,7 @@ public class TradeDataLoader {
                 new StructField("Currency", StringType, true, Metadata.empty()),
         });
         //load the trades dataset
-        Dataset<Row> trades = session.read().schema(schema).json(path);
+        Dataset<Row> trades = session.read().json(path);
 
         //TODO: log a message indicating number of records loaded and the schema used
         return trades;
