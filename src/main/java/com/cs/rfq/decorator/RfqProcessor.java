@@ -74,5 +74,6 @@ public class RfqProcessor {
         metadata.putAll(extractors.get(1).extractMetaData(rfq, this.session, this.trades));
 
         //TODO: publish the metadata
+        System.out.println(metadata);
     }
 }
