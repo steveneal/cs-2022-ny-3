@@ -79,18 +79,21 @@ public class ChatterboxServer {
                 BufferedReader in = new BufferedReader(new InputStreamReader(System.in));
                 PrintWriter out = new PrintWriter(new OutputStreamWriter(socket.getOutputStream()));
                 ArrayList<String> store = new ArrayList<String>();
+                int count = 0;
                 do {
                     //naive polling of System.in to check for input and allow thread to be interrupted
                     if (System.in.available() > 0) {
                         String line = in.readLine();
                         if (!line.equals("!!")) {
                             store.add(line);
+                            count++;
                             out.println(line);
                             out.flush();
                             log("sent", line);
                         }
                         else {
-                            out.println(store.get(0));
+                            out.println(store.get(count-1));
+
                             out.flush();
                             log("sent previous RFQ as requested");
                         }
