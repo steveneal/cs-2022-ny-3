@@ -6,6 +6,7 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.joda.time.DateTime;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -16,9 +17,10 @@ public class TotalTradesWithEntityExtractor implements RfqMetadataExtractor {
     @Override
     public Map<RfqMetadataFieldNames, Object> extractMetaData(Rfq rfq, SparkSession session, Dataset<Row> trades) {
 
-        long todayMs = DateTime.now().withMillisOfDay(0).getMillis();
-        long pastWeekMs = DateTime.now().withMillis(todayMs).minusWeeks(1).getMillis();
-        long pastYearMs = DateTime.now().withMillis(todayMs).minusYears(1).getMillis();
+        DateTime today = new DateTime("2019-06-07");
+        long todayMs = today.withMillisOfDay(0).getMillis();
+        long pastWeekMs = today.withMillis(todayMs).minusWeeks(1).getMillis();
+        long pastYearMs = today.withMillis(todayMs).minusYears(1).getMillis();
 
         Dataset<Row> filtered = trades
                 .filter(trades.col("SecurityId").equalTo(rfq.getIsin()))
