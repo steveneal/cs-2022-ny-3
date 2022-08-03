@@ -6,6 +6,7 @@ import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.joda.time.DateTime;
 
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -38,7 +39,8 @@ public class VolumeTradedWithEntityYTDExtractor implements RfqMetadataExtractor 
         return results;
     }
 
-    protected void setSince(String since) {
+    @Override
+    public void setSince(String since) {
         this.since = since;
     }
 }

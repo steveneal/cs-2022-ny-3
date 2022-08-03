@@ -68,6 +68,8 @@ public class RfqProcessor {
 
         //create a blank map for the metadata to be collected
         Map<RfqMetadataFieldNames, Object> metadata = new HashMap<>();
+        extractors.get(0).setSince("2019-06-07");
+        extractors.get(1).setSince("2019-06-07");
 
         //TODO: get metadata from each of the extractors
         metadata.putAll(extractors.get(0).extractMetaData(rfq, this.session, this.trades));

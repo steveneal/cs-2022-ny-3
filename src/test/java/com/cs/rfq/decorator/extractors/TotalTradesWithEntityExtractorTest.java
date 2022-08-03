@@ -4,6 +4,7 @@ import com.cs.rfq.decorator.Rfq;
 import com.cs.rfq.decorator.TradeDataLoader;
 import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
+import org.joda.time.DateTime;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
@@ -29,7 +30,7 @@ public class TotalTradesWithEntityExtractorTest extends AbstractSparkUnitTest {
     @Test
     public void checkTradesWhenAllTradesMatch() {
 
-        VolumeTradedWithEntityYTDExtractor extractor = new VolumeTradedWithEntityYTDExtractor();
+        TotalTradesWithEntityExtractor extractor = new TotalTradesWithEntityExtractor();
         extractor.setSince("2018-01-01");
 
         Map<RfqMetadataFieldNames, Object> meta = extractor.extractMetaData(rfq, session, trades);
@@ -38,23 +39,23 @@ public class TotalTradesWithEntityExtractorTest extends AbstractSparkUnitTest {
         Object week = meta.get(RfqMetadataFieldNames.tradesWithEntityPastWeek);
         Object year = meta.get(RfqMetadataFieldNames.tradesWithEntityPastYear);
 
-        assertEquals(1, day);
-        assertEquals(3, week);
-        assertEquals(5, year);
+        assertEquals(1L, day);
+        assertEquals(3L, week);
+        assertEquals(5L, year);
     }
 
     @Test
-    public void checkVolumeWhenNoTradesMatch() {
+    public void checkTradesWhenNoTradesMatch() {
 
         //all test trade data are for 2018 so this will cause no matches
-        VolumeTradedWithEntityYTDExtractor extractor = new VolumeTradedWithEntityYTDExtractor();
-        extractor.setSince("2019-01-01");
+        TotalTradesWithEntityExtractor extractor = new TotalTradesWithEntityExtractor();
+        extractor.setSince("2017-01-01");
 
         Map<RfqMetadataFieldNames, Object> meta = extractor.extractMetaData(rfq, session, trades);
 
         Object result = meta.get(RfqMetadataFieldNames.volumeTradedYearToDate);
 
-        assertEquals(0L, result);
+        assertEquals(null, result);
     }
 
 }
