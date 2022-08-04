@@ -22,12 +22,11 @@ public class InstrumentLiquidityExtractor implements RfqMetadataExtractor {
     @Override
     public Map<RfqMetadataFieldNames, Object> extractMetaData(Rfq rfq, SparkSession session, Dataset<Row> trades) {
 
-        long todayMs = today.withMillisOfDay(0).getMillis();
-        long pastMonthMs = today.withMillis(todayMs).minusMonths(1).getMillis();
+        DateTime pastMonth = today.minusMonths(1);
 
         String query = String.format("SELECT sum(LastQty) from trade where SecurityId='%s' AND TradeDate >= '%s'",
                 rfq.getIsin(),
-                pastMonthMs);
+                pastMonth);
 
         trades.createOrReplaceTempView("trade");
         Dataset<Row> sqlQueryResults = session.sql(query);
@@ -45,7 +44,6 @@ public class InstrumentLiquidityExtractor implements RfqMetadataExtractor {
     @Override
     public void setSince(String since) {
         DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
-        DateTime dt = formatter.parseDateTime(since);
-        this.today = dt;
+        this.today = formatter.parseDateTime(since);
     }
 }
