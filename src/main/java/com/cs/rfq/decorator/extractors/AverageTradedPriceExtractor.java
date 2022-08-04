@@ -5,6 +5,8 @@ import org.apache.spark.sql.Dataset;
 import org.apache.spark.sql.Row;
 import org.apache.spark.sql.SparkSession;
 import org.joda.time.DateTime;
+import org.joda.time.format.DateTimeFormat;
+import org.joda.time.format.DateTimeFormatter;
 
 import java.util.Date;
 import java.util.HashMap;
@@ -13,19 +15,22 @@ import java.util.Map;
 import static com.cs.rfq.decorator.extractors.RfqMetadataFieldNames.*;
 
 public class AverageTradedPriceExtractor implements RfqMetadataExtractor {
-    private String since;
 
-    //+7, -7
+    private DateTime today;
+
     public AverageTradedPriceExtractor() {
-        this.since = DateTime.now().getYear() + "-01-01"; ;
+        this.today = DateTime.now();
     }
 
     @Override
     public Map<RfqMetadataFieldNames, Object> extractMetaData(Rfq rfq, SparkSession session, Dataset<Row> trades) {
+        long todayMs = today.withMillisOfDay(0).getMillis();
+        long pastWeekMs = today.withMillis(todayMs).minusWeeks(1).getMillis();
+
         String query = String.format("SELECT avg(LastPX) from trade where EntityId='%s' AND SecurityId='%s' AND TradeDate >= '%s'",
                 rfq.getEntityId(),
                 rfq.getIsin(),
-                since);
+                pastWeekMs);
 
         trades.createOrReplaceTempView("trade");
         Dataset<Row> sqlQueryResults = session.sql(query);
@@ -36,13 +41,15 @@ public class AverageTradedPriceExtractor implements RfqMetadataExtractor {
         }
 
         Map<RfqMetadataFieldNames, Object> results = new HashMap<>();
-        results.put(RfqMetadataFieldNames.averageTradedPrice, avgTrade);
+        results.put(RfqMetadataFieldNames.averageTradedPricePastWeek, avgTrade);
         return results;
     }
 
     @Override
     public void setSince(String since) {
-        this.since = since;
+        DateTimeFormatter formatter = DateTimeFormat.forPattern("yyyy-MM-dd");
+        DateTime dt = formatter.parseDateTime(since);
+        this.today = dt;
     }
 
 
