@@ -47,6 +47,7 @@ public class RfqProcessor {
         extractors.add(new VolumeTradedWithEntityYTDExtractor());
         extractors.add(new AverageTradedPriceExtractor());
         extractors.add(new TradeSideBiasExtractor());
+        extractors.add(new InstrumentLiquidityExtractor());
     }
 
     public void startSocketListener(JavaStreamingContext jssc) throws InterruptedException {
@@ -71,6 +72,7 @@ public class RfqProcessor {
         extractors.get(1).setSince("2019-06-07");
         extractors.get(2).setSince("2019-06-07");
         extractors.get(3).setSince("2019-06-07");
+        extractors.get(4).setSince("2019-06-07");
 
 
         //TODO: get metadata from each of the extractors
@@ -78,6 +80,7 @@ public class RfqProcessor {
         metadata.putAll(extractors.get(1).extractMetaData(rfq, this.session, this.trades));
         metadata.putAll(extractors.get(2).extractMetaData(rfq, this.session, this.trades));
         metadata.putAll(extractors.get(3).extractMetaData(rfq, this.session, this.trades));
+        metadata.putAll(extractors.get(4).extractMetaData(rfq, this.session, this.trades));
 
         //TODO: publish the metadata
         //System.out.println(metadata);
