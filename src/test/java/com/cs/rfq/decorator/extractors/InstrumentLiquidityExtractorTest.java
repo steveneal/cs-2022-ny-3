@@ -35,7 +35,7 @@ public class InstrumentLiquidityExtractorTest extends AbstractSparkUnitTest{
 
         Object result = meta.get(RfqMetadataFieldNames.liquidityForPastMonth);
 
-        assertEquals(1350000L, result);
+        assertEquals(600000L, result);
     }
 
     @Test
