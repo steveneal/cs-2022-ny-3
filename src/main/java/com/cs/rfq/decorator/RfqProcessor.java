@@ -39,13 +39,14 @@ public class RfqProcessor {
         //TODO: use the TradeDataLoader to load the trade data archives
         String filePath = "src\\test\\resources\\trades\\trades.json";
         trades = new TradeDataLoader().loadTrades(session, filePath);
-        trades.printSchema();
-        trades.show();
+//        trades.printSchema();
+//        trades.show();
 
         //TODO: take a close look at how these two extractors are implemented
         extractors.add(new TotalTradesWithEntityExtractor());
         extractors.add(new VolumeTradedWithEntityYTDExtractor());
         extractors.add(new AverageTradedPriceExtractor());
+        extractors.add(new TradeSideBiasExtractor());
     }
 
     public void startSocketListener(JavaStreamingContext jssc) throws InterruptedException {
@@ -69,14 +70,21 @@ public class RfqProcessor {
         extractors.get(0).setSince("2019-06-07");
         extractors.get(1).setSince("2019-06-07");
         extractors.get(2).setSince("2019-06-07");
+        extractors.get(3).setSince("2019-06-07");
 
 
         //TODO: get metadata from each of the extractors
         metadata.putAll(extractors.get(0).extractMetaData(rfq, this.session, this.trades));
         metadata.putAll(extractors.get(1).extractMetaData(rfq, this.session, this.trades));
         metadata.putAll(extractors.get(2).extractMetaData(rfq, this.session, this.trades));
+        metadata.putAll(extractors.get(3).extractMetaData(rfq, this.session, this.trades));
 
         //TODO: publish the metadata
-        System.out.println(metadata);
+        //System.out.println(metadata);
+        for (RfqMetadataFieldNames name: metadata.keySet()) {
+            String key = name.toString();
+            String value = metadata.get(name).toString();
+            System.out.println(key + " " + value);
+        }
     }
 }
