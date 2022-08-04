@@ -39,8 +39,8 @@ public class RfqProcessor {
         //TODO: use the TradeDataLoader to load the trade data archives
         String filePath = "src\\test\\resources\\trades\\trades.json";
         trades = new TradeDataLoader().loadTrades(session, filePath);
-        trades.printSchema();
-        trades.show();
+//        trades.printSchema();
+//        trades.show();
 
         //TODO: take a close look at how these two extractors are implemented
         extractors.add(new TotalTradesWithEntityExtractor());
@@ -80,6 +80,11 @@ public class RfqProcessor {
         metadata.putAll(extractors.get(3).extractMetaData(rfq, this.session, this.trades));
 
         //TODO: publish the metadata
-        System.out.println(metadata);
+        //System.out.println(metadata);
+        for (RfqMetadataFieldNames name: metadata.keySet()) {
+            String key = name.toString();
+            String value = metadata.get(name).toString();
+            System.out.println(key + " " + value);
+        }
     }
 }
