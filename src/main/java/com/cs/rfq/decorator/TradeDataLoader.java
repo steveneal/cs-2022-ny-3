@@ -32,6 +32,8 @@ public class TradeDataLoader {
                 new StructField("LastPx", DoubleType, true, Metadata.empty()),
                 new StructField("TradeDate", DateType, true, Metadata.empty()),
                 new StructField("Currency", StringType, true, Metadata.empty()),
+                new StructField("Side", StringType, true, Metadata.empty()),
+
         });
         //load the trades dataset
         Dataset<Row> trades = session.read().schema(schema).json(path);
