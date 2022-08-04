@@ -1,9 +1,6 @@
 package com.cs.rfq.decorator;
 
-import com.cs.rfq.decorator.extractors.RfqMetadataExtractor;
-import com.cs.rfq.decorator.extractors.RfqMetadataFieldNames;
-import com.cs.rfq.decorator.extractors.TotalTradesWithEntityExtractor;
-import com.cs.rfq.decorator.extractors.VolumeTradedWithEntityYTDExtractor;
+import com.cs.rfq.decorator.extractors.*;
 import com.cs.rfq.decorator.publishers.MetadataJsonLogPublisher;
 import com.cs.rfq.decorator.publishers.MetadataPublisher;
 import org.apache.spark.SparkConf;
@@ -48,6 +45,7 @@ public class RfqProcessor {
         //TODO: take a close look at how these two extractors are implemented
         extractors.add(new TotalTradesWithEntityExtractor());
         extractors.add(new VolumeTradedWithEntityYTDExtractor());
+        extractors.add(new AverageTradedPriceExtractor());
     }
 
     public void startSocketListener(JavaStreamingContext jssc) throws InterruptedException {
@@ -70,10 +68,13 @@ public class RfqProcessor {
         Map<RfqMetadataFieldNames, Object> metadata = new HashMap<>();
         extractors.get(0).setSince("2019-06-07");
         extractors.get(1).setSince("2019-06-07");
+        extractors.get(2).setSince("2019-06-07");
+
 
         //TODO: get metadata from each of the extractors
         metadata.putAll(extractors.get(0).extractMetaData(rfq, this.session, this.trades));
         metadata.putAll(extractors.get(1).extractMetaData(rfq, this.session, this.trades));
+        metadata.putAll(extractors.get(2).extractMetaData(rfq, this.session, this.trades));
 
         //TODO: publish the metadata
         System.out.println(metadata);
