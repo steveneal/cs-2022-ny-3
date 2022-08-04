@@ -24,13 +24,13 @@ public class AverageTradedPriceExtractor implements RfqMetadataExtractor {
 
     @Override
     public Map<RfqMetadataFieldNames, Object> extractMetaData(Rfq rfq, SparkSession session, Dataset<Row> trades) {
-        long todayMs = today.withMillisOfDay(0).getMillis();
-        long pastWeekMs = today.withMillis(todayMs).minusWeeks(1).getMillis();
+
+        DateTime pastWeek = today.minusWeeks(1);
 
         String query = String.format("SELECT avg(LastPX) from trade where EntityId='%s' AND SecurityId='%s' AND TradeDate >= '%s'",
                 rfq.getEntityId(),
                 rfq.getIsin(),
-                pastWeekMs);
+                pastWeek);
 
         trades.createOrReplaceTempView("trade");
         Dataset<Row> sqlQueryResults = session.sql(query);

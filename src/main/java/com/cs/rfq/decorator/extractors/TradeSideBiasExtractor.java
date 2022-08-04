@@ -23,31 +23,30 @@ public class TradeSideBiasExtractor implements RfqMetadataExtractor {
 
     @Override
     public Map<RfqMetadataFieldNames, Object> extractMetaData(Rfq rfq, SparkSession session, Dataset<Row> trades) {
-        long todayMs = today.withMillisOfDay(0).getMillis();
-        long pastWeekMs = today.withMillis(todayMs).minusWeeks(1).getMillis();
-        long pastMonthMs = today.withMillis(todayMs).minusMonths(1).getMillis();
+        DateTime pastWeek = today.minusWeeks(1);
+        DateTime pastMonth = today.minusMonths(1);
         int buy = 1;
         int sell = 2;
 
         String buyWeek = String.format("SELECT sum(Side) from trade where EntityId='%s' AND SecurityId='%s' AND TradeDate >= '%s' AND Side='%d'",
                 rfq.getEntityId(),
                 rfq.getIsin(),
-                pastWeekMs,
+                pastWeek,
                 buy);
         String buyMonth = String.format("SELECT sum(Side) from trade where EntityId='%s' AND SecurityId='%s' AND TradeDate >= '%s' AND Side='%d'",
                 rfq.getEntityId(),
                 rfq.getIsin(),
-                pastMonthMs,
+                pastMonth,
                 buy);
         String sellWeek = String.format("SELECT sum(Side) from trade where EntityId='%s' AND SecurityId='%s' AND TradeDate >= '%s' AND Side='%d'",
                 rfq.getEntityId(),
                 rfq.getIsin(),
-                pastWeekMs,
+                pastWeek,
                 sell);
         String sellMonth = String.format("SELECT sum(Side) from trade where EntityId='%s' AND SecurityId='%s' AND TradeDate >= '%s' AND Side='%d'",
                 rfq.getEntityId(),
                 rfq.getIsin(),
-                pastMonthMs,
+                pastMonth,
                 sell);
 
         trades.createOrReplaceTempView("trade");

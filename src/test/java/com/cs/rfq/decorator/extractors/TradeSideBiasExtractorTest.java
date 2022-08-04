@@ -36,8 +36,8 @@ class TradeSideBiasExtractorTest extends AbstractSparkUnitTest{
         Object weekBuy = meta.get(RfqMetadataFieldNames.tradeSideBuyPastWeek);
         Object monthBuy = meta.get(RfqMetadataFieldNames.tradeSideBuyPastMonth);
 
-        assertEquals(2.0, weekBuy);
-        assertEquals(2.0, monthBuy);
+        assertEquals(1.0, weekBuy);
+        assertEquals(1.0, monthBuy);
     }
 
     @Test
@@ -51,8 +51,8 @@ class TradeSideBiasExtractorTest extends AbstractSparkUnitTest{
         Object weekSell = meta.get(RfqMetadataFieldNames.tradeSideSellPastWeek);
         Object monthSell = meta.get(RfqMetadataFieldNames.tradeSideSellPastMonth);
 
-        assertEquals(6.0, weekSell);
-        assertEquals(6.0, monthSell);
+        assertEquals(4.0, weekSell);
+        assertEquals(4.0, monthSell);
     }
 
     @Test
