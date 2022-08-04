@@ -12,6 +12,7 @@ public enum RfqMetadataFieldNames {
     tradeSideBuyPastWeek,
     tradeSideBuyPastMonth,
     tradeSideSellPastWeek,
-    tradeSideSellPastMonth
+    tradeSideSellPastMonth,
+    liquidityForPastMonth
 
 }
