@@ -8,40 +8,37 @@ import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
-import static com.cs.rfq.decorator.extractors.RfqMetadataFieldNames.*;
-
-public class AverageTradedPriceExtractor implements RfqMetadataExtractor {
+public class InstrumentLiquidityExtractor implements RfqMetadataExtractor {
 
     private DateTime today;
 
-    public AverageTradedPriceExtractor() {
+    public InstrumentLiquidityExtractor() {
         this.today = DateTime.now();
     }
 
     @Override
     public Map<RfqMetadataFieldNames, Object> extractMetaData(Rfq rfq, SparkSession session, Dataset<Row> trades) {
-        long todayMs = today.withMillisOfDay(0).getMillis();
-        long pastWeekMs = today.withMillis(todayMs).minusWeeks(1).getMillis();
 
-        String query = String.format("SELECT avg(LastPX) from trade where EntityId='%s' AND SecurityId='%s' AND TradeDate >= '%s'",
-                rfq.getEntityId(),
+        long todayMs = today.withMillisOfDay(0).getMillis();
+        long pastMonthMs = today.withMillis(todayMs).minusMonths(1).getMillis();
+
+        String query = String.format("SELECT sum(LastQty) from trade where SecurityId='%s' AND TradeDate >= '%s'",
                 rfq.getIsin(),
-                pastWeekMs);
+                pastMonthMs);
 
         trades.createOrReplaceTempView("trade");
         Dataset<Row> sqlQueryResults = session.sql(query);
 
-        Object avgTrade = sqlQueryResults.first().get(0);
-        if (avgTrade == null) {
-            avgTrade = 0L;
+        Object liquidityForPastMonth = sqlQueryResults.first().get(0);
+        if (liquidityForPastMonth == null) {
+            liquidityForPastMonth = 0L;
         }
 
         Map<RfqMetadataFieldNames, Object> results = new HashMap<>();
-        results.put(RfqMetadataFieldNames.averageTradedPricePastWeek, avgTrade);
+        results.put(RfqMetadataFieldNames.liquidityForPastMonth, liquidityForPastMonth);
         return results;
     }
 

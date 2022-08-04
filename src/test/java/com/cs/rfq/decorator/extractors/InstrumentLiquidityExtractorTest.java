@@ -9,9 +9,9 @@ import org.junit.jupiter.api.Test;
 
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
-class AverageTradedPriceExtractorTest extends AbstractSparkUnitTest {
+public class InstrumentLiquidityExtractorTest extends AbstractSparkUnitTest{
 
     private Rfq rfq;
     Dataset<Row> trades;
@@ -19,7 +19,6 @@ class AverageTradedPriceExtractorTest extends AbstractSparkUnitTest {
     @BeforeEach
     public void setup() {
         rfq = new Rfq();
-        rfq.setEntityId(5561279226039690843L);
         rfq.setIsin("AT0000A0VRQ6");
 
         String filePath = getClass().getResource("volume-traded-2.json").getPath();
@@ -27,28 +26,28 @@ class AverageTradedPriceExtractorTest extends AbstractSparkUnitTest {
     }
 
     @Test
-    public void checkAvgPriceWhenTradesMatch() {
+    public void totalLiquidityWhenTradesMatch() {
 
-        AverageTradedPriceExtractor extractor = new AverageTradedPriceExtractor();
+        InstrumentLiquidityExtractor extractor = new InstrumentLiquidityExtractor();
         extractor.setSince("2018-01-01");
 
         Map<RfqMetadataFieldNames, Object> meta = extractor.extractMetaData(rfq, session, trades);
 
-        Object result = meta.get(RfqMetadataFieldNames.averageTradedPricePastWeek);
+        Object result = meta.get(RfqMetadataFieldNames.liquidityForPastMonth);
 
-        assertEquals(139.648, result);
+        assertEquals(1350000L, result);
     }
 
     @Test
-    public void checkAvgPriceWhenNoTradesMatch() {
+    public void totalLiquidityPriceWhenNoTradesMatch() {
 
         //all test trade data are for 2018 so this will cause no matches
-        AverageTradedPriceExtractor extractor = new AverageTradedPriceExtractor();
+        InstrumentLiquidityExtractor extractor = new InstrumentLiquidityExtractor();
         extractor.setSince("2019-01-01");
 
         Map<RfqMetadataFieldNames, Object> meta = extractor.extractMetaData(rfq, session, trades);
 
-        Object result = meta.get(RfqMetadataFieldNames.averageTradedPricePastWeek);
+        Object result = meta.get(RfqMetadataFieldNames.liquidityForPastMonth);
 
         assertEquals(0L, result);
     }
